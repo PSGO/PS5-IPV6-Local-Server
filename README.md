@@ -1,6 +1,6 @@
-Used to establish local DNS services in a local area network.
+Used for PS5 to cache directly from local Windows PC.
 
-Synchronize updates https://github.com/idlesauce/PS5-Exploit-Host.
+Synchronize updates from https://github.com/idlesauce/PS5-Exploit-Host
 
 For PS5 FW3.00、3.10、3.20、3.21、4.00、4.02、4.03、4.50、4.51.
 
