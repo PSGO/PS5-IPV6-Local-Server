@@ -84,10 +84,16 @@ jobs:
         if: ${{ env.skip != 'true' }}
         run: rm -rf repo.zip PS5-Exploit-Host-main
 
-      # Step 12: Create compressed package
-      - name: Create compressed package
+      # Step 12: Create compressed package (dynamic version)
+      - name: Create compressed package (dynamic version)
         if: ${{ env.skip != 'true' }}
-        run: zip -r PS5_IPV6-Windows_Local_Server-Offline_Cache.zip ./*
+        run: |
+          zip_name="PS5_IPV6-Windows_Local_Server-Offline_Cache.zip"
+          if [[ "${{ github.run_number }}" != "" ]]; then
+            zip_name="PS5_IPV6-Windows_Local_Server-Offline_Cache-${{ github.run_number }}.zip"
+          fi
+          zip -r $zip_name ./*
+          echo "zip_name=$zip_name" >> $GITHUB_ENV
 
       # Step 13: Release dynamic version
       - name: Release dynamic version
@@ -95,7 +101,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create PS5-IPV6-1.0${{ github.run_number }} PS5_IPV6-Windows_Local_Server-Offline_Cache.zip \
+          gh release create PS5-IPV6-1.0${{ github.run_number }} ${{ env.zip_name }} \
           --target ${{ github.sha }} \
           -t "PS5-IPV6-1.0${{ github.run_number }}" \
           -n "${{ env.commit_message }}  ${{ env.commit_url }}"
@@ -113,7 +119,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create latest PS5_IPV6-Windows_Local_Server-Offline_Cache.zip \
+          # For fixed version, we revert the zip file name back to the original name without version
+          fixed_zip_name="PS5_IPV6-Windows_Local_Server-Offline_Cache.zip"
+          mv ${{ env.zip_name }} $fixed_zip_name
+          gh release create latest $fixed_zip_name \
           --target ${{ github.sha }} \
           -t "PS5-IPV6-1.0${{ github.run_number }}" \
           -n "${{ env.commit_message }}  ${{ env.commit_url }}"
