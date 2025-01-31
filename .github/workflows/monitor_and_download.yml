@@ -65,6 +65,14 @@ jobs:
         if: ${{ env.skip != 'true' }}
         run: unzip -q repo.zip
 
+      # Step 9: Modify appcache_manifest_generator.py
+      - name: Modify appcache_manifest_generator.py
+        if: ${{ env.skip != 'true' }}
+        run: |
+          if grep -qE 'user_input = input\(f"Found .index.html.' PS5-UMTX-Jailbreak-main/appcache_manifest_generator.py; then
+            sed -i '/user_input = input(f"Found .index.html./,/exit(1)/d' PS5-UMTX-Jailbreak-main/appcache_manifest_generator.py
+          fi
+
       # Step 9: Run appcache_manifest_generator.py
       - name: Run appcache_manifest_generator.py
         if: ${{ env.skip != 'true' }}
